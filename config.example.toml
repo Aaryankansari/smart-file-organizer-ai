@@ -1,0 +1,61 @@
+# Example configuration for Smart File Organizer AI
+# Copy this to ~/.config/smart-file-organizer/config.toml
+
+# AI Configuration
+gemini_api_key = "your-gemini-api-key-here"
+model = "gemini-2.0-flash-exp"
+ollama_model = "llama3.2-vision"
+use_local = false
+
+# Processing Configuration
+max_workers = 4
+rate_limit_delay = 1.0
+
+# Cache Configuration
+cache_enabled = true
+cache_path = "~/.config/smart-file-organizer/cache.db"
+cache_ttl_days = 30
+
+# Feature Flags
+rename_files = false
+embed_metadata = true
+create_json_sidecar = true
+dry_run = false
+interactive = false
+
+# Organization Schema
+allowed_categories = [
+    "document",
+    "image",
+    "video",
+    "audio",
+    "code",
+    "archive",
+    "spreadsheet",
+    "presentation",
+    "other"
+]
+
+allowed_tags = [
+    "work",
+    "personal",
+    "important",
+    "urgent",
+    "archive",
+    "project",
+    "reference",
+    "draft",
+    "final",
+    "review"
+]
+
+metadata_keys = [
+    "title",
+    "description",
+    "category",
+    "tags",
+    "date",
+    "author",
+    "subject",
+    "keywords"
+]

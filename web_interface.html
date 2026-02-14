@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart File Organizer AI - Web Interface</title>
+    <meta name="description" content="AI-powered file organization system with intelligent analysis and metadata management">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .upload-zone {
+            border: 3px dashed var(--primary);
+            border-radius: 15px;
+            padding: 3rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--secondary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            transform: translateY(-2px);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--success);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-card {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .option-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .option-card label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .option-card input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .option-card p {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-left: 2rem;
+        }
+
+        .model-select {
+            margin-bottom: 2rem;
+        }
+
+        .model-select label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .model-select select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .model-select select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .result-item {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .result-item.success {
+            border-left-color: var(--success);
+        }
+
+        .result-item.error {
+            border-left-color: var(--danger);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .result-filename {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .result-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .result-status.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .result-status.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .result-metadata {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .metadata-item {
+            font-size: 0.9rem;
+        }
+
+        .metadata-label {
+            font-weight: 600;
+            color: var(--gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .metadata-value {
+            color: var(--dark);
+        }
+
+        .progress {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .progress.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            transition: width 0.3s ease;
+            animation: shimmer 2s infinite;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 0.5rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        .file-list {
+            margin-top: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .file-icon {
+            font-size: 1.5rem;
+            margin-right: 0.75rem;
+        }
+
+        .file-name {
+            flex: 1;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        .file-size {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .main-card {
+                padding: 1.5rem;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Smart File Organizer AI</h1>
+            <p>Intelligent file organization powered by AI</p>
+        </div>
+
+        <div class="main-card">
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Drop files here or click to browse</div>
+                <div class="upload-subtext">Supports images, PDFs, documents, audio, and video</div>
+                <input type="file" id="fileInput" multiple style="display: none;">
+            </div>
+
+            <div class="file-list" id="fileList" style="display: none;"></div>
+
+            <div class="model-select">
+                <label for="modelSelect">AI Model</label>
+                <select id="modelSelect">
+                    <option value="gemini">Google Gemini (Cloud)</option>
+                    <option value="ollama">Ollama (Local)</option>
+                </select>
+            </div>
+
+            <div class="options-grid">
+                <div class="option-card">
+                    <label>
+                        <input type="checkbox" id="renameFiles">
+                        Rename Files
+                    </label>
+                    <p>Rename files based on AI-analyzed content</p>
+                </div>
+
+                <div class="option-card">
+                    <label>
+                        <input type="checkbox" id="embedMetadata" checked>
+                        Embed Metadata
+                    </label>
+                    <p>Embed metadata into file headers (requires ExifTool)</p>
+                </div>
+
+                <div class="option-card">
+                    <label>
+                        <input type="checkbox" id="createSidecar" checked>
+                        JSON Sidecars
+                    </label>
+                    <p>Create JSON metadata sidecar files</p>
+                </div>
+
+                <div class="option-card">
+                    <label>
+                        <input type="checkbox" id="dryRun">
+                        Dry Run
+                    </label>
+                    <p>Preview changes without applying them</p>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" id="processBtn" disabled>
+                    Process Files
+                </button>
+                <button class="btn btn-secondary" id="clearBtn" disabled>
+                    Clear
+                </button>
+            </div>
+
+            <div class="progress" id="progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <div class="progress-text" id="progressText">Processing...</div>
+            </div>
+
+            <div class="results" id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const processBtn = document.getElementById('processBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const progress = document.getElementById('progress');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const results = document.getElementById('results');
+
+        let selectedFiles = [];
+
+        // Upload zone click
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        // Drag and drop
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            selectedFiles = Array.from(files);
+            displayFiles();
+            processBtn.disabled = false;
+            clearBtn.disabled = false;
+        }
+
+        function displayFiles() {
+            if (selectedFiles.length === 0) {
+                fileList.style.display = 'none';
+                return;
+            }
+
+            fileList.style.display = 'block';
+            fileList.innerHTML = selectedFiles.map(file => `
+                <div class="file-item">
+                    <div class="file-icon">${getFileIcon(file.name)}</div>
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-size">${formatFileSize(file.size)}</div>
+                </div>
+            `).join('');
+        }
+
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const icons = {
+                'jpg': '🖼️', 'jpeg': '🖼️', 'png': '🖼️', 'gif': '🖼️', 'webp': '🖼️',
+                'pdf': '📄', 'doc': '📝', 'docx': '📝', 'txt': '📝',
+                'mp3': '🎵', 'wav': '🎵', 'flac': '🎵',
+                'mp4': '🎬', 'mov': '🎬', 'avi': '🎬'
+            };
+            return icons[ext] || '📄';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        clearBtn.addEventListener('click', () => {
+            selectedFiles = [];
+            fileInput.value = '';
+            displayFiles();
+            processBtn.disabled = true;
+            clearBtn.disabled = true;
+            results.classList.remove('show');
+            progress.classList.remove('show');
+        });
+
+        processBtn.addEventListener('click', async () => {
+            if (selectedFiles.length === 0) return;
+
+            // Show progress
+            progress.classList.add('show');
+            results.classList.remove('show');
+            processBtn.disabled = true;
+
+            // Simulate processing (in real implementation, this would call the Python backend)
+            const totalFiles = selectedFiles.length;
+            let processed = 0;
+
+            const mockResults = [];
+
+            for (const file of selectedFiles) {
+                // Simulate AI analysis delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                processed++;
+                const percent = (processed / totalFiles) * 100;
+                progressFill.style.width = percent + '%';
+                progressText.textContent = `Processing ${processed} of ${totalFiles} files...`;
+
+                // Mock result
+                mockResults.push({
+                    file: file.name,
+                    success: Math.random() > 0.1,
+                    metadata: {
+                        title: `Analyzed: ${file.name.split('.')[0]}`,
+                        description: 'AI-generated description of file content',
+                        category: ['document', 'image', 'video', 'audio'][Math.floor(Math.random() * 4)],
+                        tags: ['work', 'important', 'project'],
+                        date: new Date().toISOString().split('T')[0]
+                    }
+                });
+            }
+
+            // Display results
+            displayResults(mockResults);
+            progress.classList.remove('show');
+            processBtn.disabled = false;
+        });
+
+        function displayResults(resultsData) {
+            results.innerHTML = resultsData.map(result => {
+                const statusClass = result.success ? 'success' : 'error';
+                const statusText = result.success ? 'Success' : 'Error';
+
+                return `
+                    <div class="result-item ${statusClass}">
+                        <div class="result-header">
+                            <div class="result-filename">${result.file}</div>
+                            <div class="result-status ${statusClass}">${statusText}</div>
+                        </div>
+                        ${result.success ? `
+                            <div class="result-metadata">
+                                <div class="metadata-item">
+                                    <div class="metadata-label">Title</div>
+                                    <div class="metadata-value">${result.metadata.title}</div>
+                                </div>
+                                <div class="metadata-item">
+                                    <div class="metadata-label">Category</div>
+                                    <div class="metadata-value">${result.metadata.category}</div>
+                                </div>
+                                <div class="metadata-item">
+                                    <div class="metadata-label">Tags</div>
+                                    <div class="metadata-value">${result.metadata.tags.join(', ')}</div>
+                                </div>
+                                <div class="metadata-item">
+                                    <div class="metadata-label">Date</div>
+                                    <div class="metadata-value">${result.metadata.date}</div>
+                                </div>
+                            </div>
+                        ` : `
+                            <div style="color: var(--danger); margin-top: 0.5rem;">
+                                Failed to process file
+                            </div>
+                        `}
+                    </div>
+                `;
+            }).join('');
+
+            results.classList.add('show');
+        }
+    </script>
+</body>
+</html>

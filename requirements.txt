@@ -1,0 +1,20 @@
+# Core AI Dependencies
+google-generativeai>=0.3.0
+ollama>=0.1.0
+
+# Web Framework
+Flask>=3.0.0
+Flask-CORS>=4.0.0
+
+# Image Processing
+Pillow>=10.0.0
+pillow-heif>=0.13.0
+
+# PDF Processing
+PyPDF2>=3.0.0
+
+# Configuration
+tomli>=2.0.0; python_version < '3.11'
+
+# Optional: ExifTool wrapper (requires exiftool binary)
+# pyexiftool>=0.5.0
