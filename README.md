@@ -332,8 +332,7 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 ## 🙏 Acknowledgments
 
-- Inspired by [Foadsf/ai-file-organizer](https://github.com/Foadsf/ai-file-organizer)
-- Built with [Google Gemini](https://ai.google.dev/)
+- 
 - Local AI powered by [Ollama](https://ollama.ai/)
 - Metadata handling via [ExifTool](https://exiftool.org/)
 
