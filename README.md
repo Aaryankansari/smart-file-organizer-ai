@@ -340,7 +340,3 @@ MIT License - see [LICENSE](LICENSE) file for details
 ## 📧 Contact
 
 For questions, issues, or suggestions, please open an issue on GitHub.
-
----
-
-**Made with ❤️ and 🤖 AI**
